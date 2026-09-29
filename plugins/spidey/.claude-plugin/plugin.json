@@ -1,0 +1,8 @@
+{
+  "name": "spidey",
+  "version": "0.1.0",
+  "description": "Kickoff, spec and story skills; story-reviewer, test-writer, qa-evaluator agents; check gate, path guard and format hooks",
+  "author": { "name": "Preyash Yadav" },
+  "license": "MIT",
+  "keywords": ["workflow", "review", "testing", "hooks"]
+}

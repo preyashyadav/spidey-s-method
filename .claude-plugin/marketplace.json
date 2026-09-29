@@ -1,0 +1,12 @@
+{
+  "name": "spidey-kit",
+  "owner": { "name": "Preyash Yadav" },
+  "description": "Personal agentic dev setup: story pipeline, review/test/QA agents, enforcement hooks",
+  "plugins": [
+    {
+      "name": "spidey",
+      "source": "./plugins/spidey",
+      "description": "Kickoff, spec and story skills; story-reviewer, test-writer, qa-evaluator agents; check gate, path guard and format hooks"
+    }
+  ]
+}

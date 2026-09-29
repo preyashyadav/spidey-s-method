@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+usage() {
+  echo "usage: spidey-wt <docs/stories/NNN-slug.md> [base-ref]   start a story in its own worktree" >&2
+  echo "       spidey-wt list                                    list story worktrees" >&2
+  echo "       spidey-wt clean <NNN-slug>                        remove a merged story worktree" >&2
+  exit 1
+}
+[ $# -ge 1 ] || usage
+root=$(git rev-parse --show-toplevel)
+name=$(basename "$root")
+
+case "$1" in
+  list)
+    git -C "$root" worktree list
+    exit 0
+    ;;
+  clean)
+    [ $# -eq 2 ] || usage
+    git -C "$root" worktree remove "$(dirname "$root")/$name-$2"
+    git -C "$root" branch -d "story/$2" || echo "branch story/$2 not fully merged; left in place" >&2
+    exit 0
+    ;;
+esac
+
+story="$1"
+base=$(git -C "$root" rev-parse "${2:-HEAD}")
+rel="${story#"$root"/}"
+slug=$(basename "$rel" .md)
+if ! git -C "$root" cat-file -e "$base:$rel" 2>/dev/null; then
+  echo "$rel is not committed at $base. Commit the story first so the worktree sees it." >&2
+  exit 1
+fi
+path="$(dirname "$root")/$name-$slug"
+git -C "$root" worktree add -b "story/$slug" "$path" "$base"
+cd "$path"
+if [ -x scripts/setup-worktree ]; then
+  scripts/setup-worktree
+fi
+echo "worktree: $path (story/$slug from ${base:0:10})"
+exec claude "/spidey:story $rel"
